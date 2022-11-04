@@ -1,0 +1,106 @@
+\chapter{Wave forces}
+\label{appendix:derivation 2nd order wave force}
+
+
+Since the drift forces acting on a floating island is a limiting factor in when a floating island is feasible, the origin of the force is investigated. Therefore a derivation is included in this appendix. The following description of the so-called first- and second-order wave forces comes almost entirely from \parencite{Pinkster1980} and \parencite{journee2000offshore}:\\
+Stationary floating structures or submerged in irregular waves are subjected to large, so-called first order, wave forces and moments that are linearly proportional to the wave height and contain the same frequencies as the waves. They are also subjected to small, so-called second-order, mean and low-frequency wave forces and moments that are proportional to the square of the wave height. The frequencies of low-frequency components are associated with the frequencies of wave groups occurring in irregular waves. \\
+\\
+Motions are caused by these first- and second-order forces and moments. The first order forces and moments cause first order motions. They have been investigated for a long time and as a result, methods have been developed which can estimate the first order motions quite accurately. The second-order wave forces and moments can affect a floating structure in an entirely different way. The horizontal component of the mean and low-frequency second-order wave force is also known as the wave drift force. Since a floating structure will carry out a steady slow drift motion in the general direction of wave propagation if it is not restrained. \\
+\\
+\parencite{verhagen1970low}, \parencite{hsu1972analysis} and \parencite{remery1972slow} already showed in the early 1970s that the low-frequency components of the wave drift forces in irregular waves could, even though relatively small in magnitude, excite large amplitude low-frequency horizontal motions of moored vessels. In irregular waves, the drift forces contain components with frequencies coinciding with the natural frequencies of the horizontal motions of moored vessels. Combined with the fact that the damping of low-frequency horizontal motions of moored structures is generally low, this leads to large amplitude resonant behaviour of the motions. The derivation of this second-order wave drift force is shown in the following section.
+
+\section{Derivation second-order wave drift force}
+
+
+The derivation of the second-order wave force follows from the direct integration method of pressures on the hull. The theory is developed using perturbation methods. This means that all quantities such as wave height, motions, potentials, pressures etc. are assumed to vary only very slightly relative to some initial static value and may be written in the following form \parencite{journee2000offshore}:
+\begin{equation}
+    \vec{X}=\vec{X}^{(0)}+\varepsilon \vec{X}^{(1)}+\varepsilon^{2} \vec{X}^{(2)}
+    \label{eq: general form x pertubation}
+\end{equation}
+Where $\vec{X}^{(0)}$ denotes the mean position vector (static value), $\vec{X}^{(1)}$ indicates the first order oscillatory motion and $\vec{X}^{(2)}$ the second-order variation. The parameter $\epsilon$ is some small number, with $\epsilon<<1$, which denotes the order of oscillation. First-order, in this case, means that the quantity relates linearly to the wave height and second-order means that it depends on the square of the wave height. Since $\epsilon<<1$, higher-order terms will be negligible. \\
+\\
+As said earlier, the derivation of the fluid force exerted on the body follows from the direct integration method of pressures on the hull:
+\begin{equation}
+\bar{F}=-\iint_{S} p \cdot \vec{N} \cdot d S
+\label{eq: direct int method}
+\end{equation}
+where $S$ is the instantaneous wetted surface and $\vec{N}$ is the instantaneous normal vector to the surface element $dS$ relative to the G(x,y,z) system of axes. The normal vector $\vec{N}$ and the pressure $p$ can be written in the form as in\ref{eq: general form x pertubation}. \\
+\\
+The instantaneous wetted surface $S$ is split into two parts, a constant part $S_0$ up to the static waterline and an oscillating part s between the static water line and the wave profile along the body. \\
+\\
+Substitution of the pressure $p$ and the normal vector $\vec{N}$ into equation \ref{eq: direct int method} gives:
+\begin{equation}
+\begin{aligned}
+\vec{F}=&-\iint_{S_{0}}\left(p^{(0)}+\varepsilon p^{(1)}+\varepsilon^{2} p^{(2)}\right) \cdot\left(\vec{n}+\varepsilon \vec{N}^{(1)}\right) \cdot d S \\
+&-\iint_{S}\left(p^{(0)}+\varepsilon p^{(1)}+\varepsilon^{2} p^{(2)}\right) \cdot\left(\vec{n}+\varepsilon \vec{N}^{(1)}\right) \cdot d S
+\end{aligned}
+\label{eq: total drift force}
+\end{equation}
+Which can be split into zeroth-, first- and second-order force:
+\begin{equation}
+=\vec{F}(0)+\varepsilon \vec{F}(1)+\varepsilon^{2} \vec{F}(2)+O\left(\varepsilon^{3}\right)
+\end{equation}
+
+The \textbf{hydrostatic force $\vec{F}(0)$} follows from integration of the hydrostatic pressure $\vec{p}(0)$ over the mean wetted surface $S_0$
+\begin{equation}
+\bar{F}^{(0)}=-\iint_{S_{0}}\left(p^{(0)} \cdot \bar{n}\right) \cdot d S = (0,0,\rho g \nabla)
+\end{equation}
+
+The \textbf{first oscillatory fluid force $\vec{F}(1)$} is
+\begin{equation}
+F^{(1)}=-\iint_{S_{0}}\left(p^{(0)} \cdot N^{(1)}\right) \cdot d S-\iint_{S_{0}}\left(p^{(1)} \cdot \bar{n}\right) \cdot d S 
+-\iint_{s}\left(p^{(0)} \cdot \bar{n}\right) \cdot d S
+\label{eq: first order fluid force}
+\end{equation}
+
+Which has three terms:
+\begin{enumerate}
+    \item The first term is the product of the hydrostatic pressures $p^{(0)}$ and the oscillatory components of the normal vector $\vec{N}^{0}$
+    \begin{equation}
+        R^{(1)}\cdot  (0,0,\rho g \nabla)
+    \end{equation}
+    Where $R^{(1)}$ are the first order motions, so this part of the force is due to the rotating body axes.
+    \item The second term is the product of the first order pressures $p^{(1)}$ and the static normal vector $\vec{n}$, integrated over the constant surface $S_0$
+    \item The third term is the product of the hydrostatic pressures $p^{(0)}$ and the static normal vector $\vec{n}$, integrated over the oscillatory part of the wetted surface $s$. This term is zero because the hydrostatic pressure at the oscillating surface $p^(0)$ is zero. After all, it is defined at the waterline.
+\end{enumerate}
+
+Thus, the total first-order fluid force in the equation \ref{eq: first order fluid force} can be written as
+
+\begin{equation}
+    \vec{F}^{(1)}=R^{(1)} \cdot(0,0, \rho g \nabla)-\iint_{S_{0}}\left(p^{(1)} \cdot \vec{n}\right) \cdot d S
+\end{equation}
+
+
+The \textbf{second order fluid force $\vec{F}^(2)$} follows from \ref{eq: total drift force}:
+\begin{equation}
+    \vec{F}^{(2)}=-\iint_{S_{0}}\left(p^{(1)} \cdot \vec{N}^{(1)}\right) \cdot d S-\iint_{S_{0}}\left(p^{(2)} \cdot \vec{n}\right) \cdot d S -\iint_{s}\left(p^{(0)} \cdot \vec{N}^{(1)}\right) \cdot d S-\iint_{s}\left(p^{(1)} \cdot \vec{n}\right) \cdot d S
+\end{equation}
+
+Which is divided into four terms and are discussed separately from left to right:
+\begin{enumerate}
+    \item Products of first order pressures $p^{(1)}$ and the first order oscillatory components of the normal vector $N^{(1)}$ give second order force contributions over the constant part $S_0$, which can be written as:
+    \begin{equation}
+        = R^{(1)} \cdot (\vec{F}^{(1)} - R^{(1)} \cdot (0,0,\rho g \nabla)
+    \end{equation}
+    \item Product of the second order pressures $p^{(2)}$ and the normal vector $\vec{n}$ integrated over the constant part of the wetted surface $S_0$
+    \item Products of the hydrostatic pressures $p^{(0)}$ and the first order oscillatory components of the normal vector $\vec{N^{(1)}}$ give second order force contributions when it is integrated over the oscillatory part of the wetted surface $s$. Although, this term is
+    zero because the hydrostatic pressure at the oscillating surface $p^{(0)}$ is zero because it has to be determined at the waterline.
+    \item Products of the first order pressures $p^{(1)}$ and the normal vector $\vec{n}$ give second order force contributions because of its integration over the oscillatory part of the wetted surface $s$. 
+
+\end{enumerate} 
+
+When all these elements are combined, the \textbf{total second order fluid force} can be expressed as:
+
+\begin{equation}
+\begin{aligned}
+\vec{F}^{(2)} &= m \cdot R^{(1)} \cdot \vec{X}_{G}^{(1)} \\
+&+\iint_{S_{0}}\left\{\frac{1}{2} \rho\left(\vec{\nabla} \Phi^{(1)}\right)^{2}+\rho \frac{\partial \Phi^{(2)}}{\partial t}+\rho \vec{X}^{(1)} \cdot \vec{\nabla} \frac{\partial \Phi^{(1)}}{\partial t}\right\} \cdot \vec{n} \cdot d S \\
+&-\oint_{w l} \frac{1}{2} \rho g\left(\zeta_{r}^{(1)}\right)^{2} \cdot \vec{n} \cdot d l
+\end{aligned}
+\end{equation}
+
+
+
+
+% \subsection*{Quadratic Transfer Function (niet af!)}
+% The second-order wave forces can be expressed in terms of time-independent \acrfull{QTFs} by means of which it is possible to express the second-order wave excitation force (shown in equation \ref{}) in the frequency domain in terms of force spectra or in the time domain as time histories of second-order forces. 

@@ -1,0 +1,63 @@
+\chapter{Executive summary}
+\label{chapter:executive summary}
+
+
+% % When a floating structure is placed in the sea it will experience motions due to the action of waves. Very large structures are desired to bring these motions to a minimum. A minimum, low enough that the floating islands could serve as living and working spaces for people. But large structures experience large drift forces due to the second-order wave forces, which result in enormous mooring costs. \\
+% % \\
+% % When long, regular waves are interacting with a box-type structure, the transmitted wave height, reflected wave height and the mean drift forces seem to follow the same trend as expected as according to linear wave theory. The transmitted wave height is lower than in the experiment and the reflected wave height is a bit higher. Therefore, the drift forces turn out higher as well. A grid with cell size around the waterline of dx = 250mm and dz = 250mm was found to be optimal for a simulation with regular waves of H=0.5m and T=10.4s. A coarser grid delivered unrealistic and erratic forces on the structure.  The numerical dissipation characteristics allowed the grid to be coarser: dx = 500mm and dz = 500mm. Also, an experiment with waves breaking over a breaker bar was simulated in ComFLOW to see how the breaking characteristics compare. This resulted in a good match between ComFLOW and the experiment in wave height after the breaking point for several grids.\\
+% % \\
+% % Breakwaters, connected to the wave-ward side of the floating islands, can provide shelter by attenuating the waves. Thereby, the mean wave drift force of the floating island will be reduced due to the presence of the breakwater. The geometry of the breakwater will lead to a certain performance in term of the responses: mean wave drift force and transmitted wave height. ComFLOW together with the optimisation method Design of Experiments is used to come up with the optimal design of the breakwater in order to minimise the mean wave drift force, while maximizing the attenuation of the waves. This is done for two different wave conditions and both lead to a large submerged structure, with a sloping beach at its wave-ward side which forces the wave energy to dissipate through breaking.\\
+% % \\
+% % Also, an economical design optimisation is done based on the reduction of total costs the presence of the breakwater delivers. This total cost reduction is the reduction in mooring costs of the floating island due to the reduction of the mean wave drift force minus the costs of the construction of the breakwater. This resulted in a small breakwater, with a width of 10, depth of 9.6 and a draught of 6.2 meters. This breakwater is able to deliver a total cost reduction of 9.8 M\texteuro on the floating island. 
+
+
+
+
+% % % The geometry of the breakwaters define the ratio between the dissipated and the reflected wave energy. A numerical design method will be developed, which is going to be a collaboration between ComFLOW (which simulates the fluid flow around the floating breakwater under the action of waves) and DAKOTA (which changes the floating breakwater's dimensions for more simulations in order to reach the optimal design). This numerical design method will deliver a Pareto front between reduction of drift forces and a reduction of transmitted wave height, which can be used in the trade-off for the final design of the floating breakwater.
+
+
+% % %terugkomen op 2D
+
+% % %resultaten validatie
+
+% % %breakwater connected to island--> novel--> extra stijfheid
+
+% % the best performing breakwaters for attenuating wvae energy are large structures with their top around the waterline. 
+% % for minimising mean wave drift force also large, but deeper submerged and a wedge at the front side of the bw. 
+% % profitable smaller, at the waterline, dimensions etc. 
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %INTRODUCTION
+The development of floating islands is an attractive option to provide living/working spaces at sea, as it would be a more economical solution for many locations at sea where the water depth is high. However, large second-order wave forces cause the floating island mooring system to become expensive as the wave height increases. So, in many locations with an intermediate water depth, land reclamation is still a more economical solution. A breakwater connected to the wave-ward side of the floating island can reduce the mean wave drift force of the entire structure by attenuating wave energy and thereby lowering the mooring costs. In this thesis, the optimal geometry of this breakwater is designed.\\
+\\
+An optimisation is performed to find the ideal geometry of this breakwater such that it attenuates the maximum amount of wave energy while experiencing a low mean wave drift force. A parametric design of a breakwater is made, with six varying factors/parameters that define its shape, such that the geometry could range from a flat plate just below the water line, a large box-type breakwater at the water surface, a deeply submerged wedge-type breakwater, or anything in between. ComFLOW (a simulation method for free-surface flow) is used to determine the mean wave drift force and wave attenuation performance of all the breakwaters in the design space for two different regular wave conditions: Wave Condition 1 with a wave height of 3.0 metres and a peak period of 6.0 seconds, and Wave Condition 2 with a wave height of 9.0 metres and a peak period of 10.4 seconds. After all ComFLOW results are gathered, an optimisation method \acrfull{doe} is used to map the dependency of the six input factors that define the geometry, on the performance of the breakwaters, to come up with the geometry of the optimal breakwater. \\
+\\
+To obtain the most accurate representation of reality in the numerical environment of ComFLOW, a validation of the programme is performed in two phases. Firstly, ComFLOW results are compared to analytical formulas, derived from linear wave theory. And secondly, ComFLOW dissipation characteristics are compared with the results of a physical experiment involving a regular wave plunging over a barred beach profile. From this followed, a minimum of twenty cells is required at the height of the structure to give reliable results of the mean wave drift forces on the structure. ComFLOW results for the wave transmission, wave reflection and forces on the structure followed the same trend as linear wave theory, with a converging offset. The wave energy dissipation characteristics of ComFLOW of all different grid sizes used in comparison with the experiment in which waves were plunging over a breaker bar, showed results that were in compliance with the experiment.\\
+\\
+In Design Iteration 1, 94 different geometries were simulated in ComFLOW, of which 46 were completely submerged. Around 80\% of all submerged breakwaters experienced a mean wave drift force in the opposite direction of wave propagation. An explanation for this negative mean wave drift force is sought by the set-up and set-down of the water level, which occur around breaking waves. This results in a difference in hydrostatic pressure, and if the breakwater is positioned in between, it will experience a mean wave drift force in the opposite direction of wave propagation. The length of the sloping beach of the breakwater needs to be shorter than the wave length; otherwise, the set-up will be above the beach, and this results in a contribution to the mean wave drift force in the same direction of the wave propagation. The optima found by \acrshort{doe} based on minimising the mean wave drift force were either a shallow box-type structure relatively far below the water surface or a large structure closer to the waterline with a sloping beach on its wave-ward side, which induces the waves to break and thus dissipate wave energy. For maximal wave attenuation performance, the height and length of the breakwater must be maximised.\\
+\\
+A cost function is developed that computes the reduction in captical expenditures (\acrshort{capex}) the breakwater provides to the floating island. Therefore, the construction costs of the breakwaters and the reduction in the mooring costs of the floating island are calculated. The difference between the two is the total cost reduction that the breakwater provides. An optimisation is done on maximising this total cost reduction for Wave Condition 1, which resulted in an optimal design of a breakwater with a length of 10.0 metres, a depth of 9.6 metres, a draught of 6.2 metres and its wave-ward side is a sloping beach that induces the incoming waves to break. It can provide a cost reduction of 24.4 k\texteuro  per unit width. Compared with a floating island designed by the 3-year Space@Sea project for a location in the North Sea, this breakwater would deliver a 51\% mooring cost reduction and a 7.7\% reduction in total costs. 
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %HYDRODYNAMIC OPTIMISATION
+% In this paper, an optimisation of the design of a breakwater geometry for a captive set-up is presented. In the first design iteration, various configurations of breakwaters are simulated in ComFLOW with varying factors. Then, the performance of each breakwater is quantified by studying the influence of the magnitude of the factors on the responses (mean wave drift force and wave transmission). Finally, a more extensive analysis of the results is performed based on physical phenomena and the literature.
+
+% In this paper, an optimisation of the design of a breakwater geometry for a captive set-up is presented. In the first design iteration, various configurations of breakwaters are simulated in ComFLOW with varying factors. The performance of each breakwater in terms of mean wave drift force and wave transmission is quantified by studying the influence of the magnitude of the factors (T, W, front\_fraction, top\_fraction and WL) on the responses. Then, based on a minimal wave transmission coefficient, optima are given where both responses are minimised.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %ECONOMIC OPTIMISATION
+
+% The main objective of this thesis is to reduce the costs of a floating island by coupling a breakwater to its wave-ward side, with an optimised geometry such that it attenuates the wave energy, while minimising its own mean wave drift force, and thereby reducing the costs on the required mooring system. The breakwaters are able to provide a cost reduction of 7.7\% on the total costs of the island. The optimal breakwater has a width of 10.0 metres, a depth of 9.6 metres and a draught of 6.2 metres. The breaks that performed best hydrodynamically turned out to have a negative cost reduction. Secondly, the set-up of the mean water level due to wave breaking behind the breakwater causes the mean waves drift forces to be in the opposite direction of wave propagation.
+
+
+% The main objective from this thesis is to reduce the costs of a floating island by coupling a breakwater to its wave-ward side, which attenuated wave energy, while minimising its own mean wave drift force, and thereby reducing the costs on the required mooring system of both the breakwater and the floating island connected at its lee-side. A cost function has been written that translates the hydrodynamic performances of the breaks into costs. It shows that some breakwaters in the design space appear to provide a cost reduction, indicating that the relevance of the research is high.
+
+% This thesis aims to reduce the costs of a floating island by coupling a breakwater to its wave-ward side, which attenuated wave energy, while minimising its own mean wave drift force, and thereby reducing the costs on the required mooring system of both the breakwater and the floating island connected at its lee-side. A cost function has been written that translates the hydrodynamic performances of the breaks into costs. It is shown that some breakwaters in the design space appear to provide a cost reduction, indicating that the relevance of the research is high.
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % BOTH OPTIMISATIONS
+% The aim of this thesis is to reduce the costs of mooring the floating island by connecting a structure to its wave-ward side with an optimised geometry in such a way that the mean wave drift forces are reduced. The breakwaters that performed best hydrodynamically turned out to have a negative cost reduction. The optimal breakwater has a width of 10.0 metres, a depth of 9.6 metres, and a draught of 6.2 metres. A breakwater can provide a cost reduction of 7.7\% on the total costs of the island.
+

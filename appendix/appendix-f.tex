@@ -1,0 +1,631 @@
+\chapter{Python scripts for post-processing}
+\label{app: scripts for post-processing}
+
+
+% \lstset{language=python,
+%                 basicstyle=\ttfamily,
+%                 numbers=left,
+%                 breaklines=true,
+%                 stepnumber=1,
+%                 showstringspaces=false,
+%                 tabsize=1,
+%                 breakatwhitespace=false,
+%                 keywordstyle=\color{blue}\ttfamily,
+%                 stringstyle=\color{red}\ttfamily,
+%                 commentstyle=\color{applegreen}\ttfamily,
+% }
+% \begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+% \begin{lstlisting}[linewidth=\columnwidth,caption=Functions used in setting up simulations ., label=script:setting up simulations]
+
+    
+% \end{lstlisting}
+% \end{mdframed}
+
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Script that does the hydrodynamical post-processing ., label=script:hydro post processing]
+
+from post_processing_functions import breakwater_parameters_in_resultdict, stable_check, mean_wave_drift_force, transmitted_wave_height, CoB_postprocess
+import pickle
+
+
+## INPUT
+#name of the run folders
+runs = ['run_23'] #IF MORE, INCREASE INPUT IN CUTOFFSECONDS!
+path_to_data = r'//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations_finished'
+
+## PUT BREAKWATER PARAMETERS IN DICTIONARY
+resultDict = breakwater_parameters_in_resultdict(runs, path_to_data)
+
+## STABLE CHECK AND INPUT COMFLOW IN DICT
+resultDict = stable_check(resultDict,runs)
+
+#CoB in resultDict
+resultDict = CoB_postprocess(resultDict,runs)
+
+## PUT MEAN WAVE DRIFT FORCE IN DICTIONARY
+cutoffSeconds = [125]
+show_figures = 0
+show_all_forcefigures= 0
+resultDict = mean_wave_drift_force(resultDict, runs, cutoffSeconds, show_figures, show_all_forcefigures)
+
+## TRANSMITTED WAVE HEIGHT
+show_figures=0
+resultDict = transmitted_wave_height(resultDict, runs, cutoffSeconds, show_figures)
+
+
+## SAVE resultDict TO FILE
+for indexRun, run in enumerate(runs):
+    with open('../output_files/data_{}'.format(run), 'wb') as f:
+        pickle.dump(resultDict[indexRun], f, pickle.HIGHEST_PROTOCOL)
+
+
+
+
+\end{lstlisting}
+\end{mdframed}
+
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Costs post-processing ., label=script:Costs post-processing]
+
+from post_processing_functions import extract_result_data, mean_wave_drift_force_floating_island_strip, geometry_costs_function
+import pickle
+
+# This script calculates everything regarding the costs. The breakwater price and the reduction in mooring costs
+
+runs = ['run_21']
+
+#MOORING COST REDUCTION
+H_i = 3
+Fd_without_breakwater = mean_wave_drift_force_floating_island_strip(H_i)
+
+
+for indexRun, run in enumerate(runs):
+    data = extract_result_data(run)
+
+    for indexConfig, config in enumerate(data.configuration):
+        if config.stable == True:
+
+            Fd_island = (12304*9.80665E3)/9/45                                         #drift force where island is designed for D3.3 S@S per unit width
+            total_mooring_cost_strip = (20E6)/9                         #euros
+            mooring_costs_per_unit_width = total_mooring_cost_strip/45  #euros
+
+            fraction_H = config.H_t/H_i
+
+            cost_island_mooring_with_breakwater = fraction_H**2 * mooring_costs_per_unit_width      #mooring costs per unit with breakwater
+
+            costs_breakwater_mooring  = mooring_costs_per_unit_width*  (config.mean_wave_drift_force/Fd_island)   #mooring costs per unit breakwater itself
+            total_costs_with_breakwater = cost_island_mooring_with_breakwater+costs_breakwater_mooring #per unit width
+            #print(total_costs_with_breakwater)
+
+
+            config.costs_breakwater_mooring             = costs_breakwater_mooring
+            config.costs_island_mooring_with_Ht         = cost_island_mooring_with_breakwater
+            config.reduction_mooring_costs              = mooring_costs_per_unit_width - total_costs_with_breakwater
+
+
+#BREAKWATER CONSTRUCTION COSTS
+rho_w = 1000 #[kg/m3] density water
+for indexRun, run in enumerate(runs):
+    #data = extract_result_data(run)
+    for indexConfig, config in enumerate(data.configuration):
+        if config.stable == True:
+
+            #print('configuration {} has a reduction in mooring cost of {}'.format(config.number, round(config.reduction_mooring_costs, 2)))
+
+            geometry_costs = geometry_costs_function(config.T,config.W,config.front_fraction,config.top_fraction,config.verschuiving,config.WL,config.mass,config.h,config.x)
+            #print('configuration {} has a construction cost of {} ME'.format(config.number,round(geometry_costs*10**(-6),2)))
+
+            config.geometry_costs = geometry_costs
+            print('configuration {} resulted in a cost reduction of {} euro'.format(config.number,round(config.reduction_mooring_costs - geometry_costs,2)))
+
+
+    with open('../output_files/data_{}'.format(run), 'wb') as f:
+        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+
+
+
+
+    
+\end{lstlisting}
+\end{mdframed}
+
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Functions used in post-processing ., label=script: post processing functions]
+import numpy as np
+import glob
+from packages.configuration_structure.Config import Configuration, Run
+import re
+import comflow
+import matplotlib.pyplot as plt
+import pymarin_timedom
+import h5py
+from scipy import interpolate
+import pickle
+import sys
+sys.path.append('./packages')
+from FUNCTIONS import define_L
+sys.path.append('../running_simulations_scripts')
+from running_simulations_functions import parabolic_beach
+from scipy.optimize import fsolve
+sys.path.insert(1,'M:/My Documents/pythonProject/Optimization/optimization_clusterfolder/running_simulations_scripts')
+from running_simulations_functions import CoB, parabolic_beach
+
+def breakwater_parameters_in_resultdict(runs, path_to_data):
+
+    csv_switch = 0
+    resultDict = []
+    for indexRun, run in enumerate(runs):
+        path = path_to_data + '/{}'.format(run)
+
+        print('receiving information from {}'.format(path))
+        r1 = Run(name = run, path = path)
+
+        for indexConfig, configFolder in enumerate(glob.glob(path + '/*')): #find different configuration folders
+            #read parameter csv file and put in data struct
+            if 'parameters_DE.csv' in configFolder:
+                csv_switch=1
+                for singleConfig in np.loadtxt(configFolder, skiprows=0, delimiter=','):
+
+                    runpath = path+'/configuration_{}'.format(int(singleConfig[0]))
+                    config = Configuration(number=int(singleConfig[0]), T=singleConfig[1], W=singleConfig[2], front_fraction= singleConfig[3], top_fraction = singleConfig[4],
+                                            verschuiving = singleConfig[5], WL = singleConfig[6], runpath=runpath)
+                    r1.configuration.append(config)
+            elif 'parameters_DE.csv' in configFolder:
+                print('place parameters_DE.csv file in folder')
+        resultDict.append(r1)
+
+
+    if csv_switch == 0:
+        print('no parameter.csv file in folder!')
+
+
+    return resultDict
+
+
+def CoB_postprocess(resultDict,runs):
+    for indexRun, run in enumerate(runs):
+        for config in resultDict[indexRun].configuration:
+            h, x = parabolic_beach(config.verschuiving, config.T, config.W, config.front_fraction, config.top_fraction, config.WL)
+            CoBx, CoBz, mass_bw, area_underwater = CoB(config.T, config.W, config.front_fraction, config.top_fraction, config.WL, h, x)
+
+            config.CoBx = CoBx
+            config.CoBz = CoBz
+            config.mass = mass_bw
+            config.h = h
+            config.x = x
+
+            print('CoB calculated for configuration {}'.format(config.number))
+    return resultDict
+
+
+def stable_check(resultDict, runs):
+    ## STABLE CHECK AND INPUT COMFLOW IN DICT
+    for indexRun, run in enumerate(runs):
+        stable = 0
+        unstable = 0
+        for config in resultDict[indexRun].configuration:
+
+            #check what the input tmax is
+            file = open(r'{}/input_files/comflow.cfi'.format(config.runpath), 'r')
+            lines = file.readlines()
+            for line in lines:
+                if 'tmax' in line:
+                    for linepart in line.split(' '):
+                        if 'tmax' in linepart:
+                            config.tmax = float(re.findall(r'\d+.\d',linepart)[0])
+                if 'model' in line and 'height' in line:
+                    for linepart in line.split(' '):
+                        if 'height' in linepart:
+                            config.waveHeight = float(re.findall(r'\d+.|\d', linepart)[0])
+                        if 'period' in linepart:
+                            config.wavePeriod = float(re.findall(r'\d+.|\d', linepart)[0])
+            try:
+                file = open(r'{}/proc_1/tictoc.dat'.format(config.runpath), 'r')
+            except:
+                config.stable = False
+                print('configuration {} has no tictoc.dat'.format(config.number))
+                continue
+            lines = file.readlines()
+            tictoc_lastline = lines[-1].split()
+            final_time_simulation = float(tictoc_lastline[1])
+
+
+            #if final time is within two seconds of target time, simulation was stable
+            if abs(final_time_simulation-config.tmax) < 2:
+                config.stable = True
+                stable+=1
+            else:
+                config.stable = False
+                print('configuration {} is unstable, ran until t = {} sec'.format(config.number,round(final_time_simulation)))
+                unstable+=1
+        resultDict[indexRun].totalStable = stable
+        resultDict[indexRun].totalUnstable = unstable
+
+        print('{} stable simulations in {}'.format(stable, run))
+        print('{} unstable simulations in {}'.format(unstable, run))
+    return resultDict
+
+
+def mean_wave_drift_force(resultDict, runs, cutoffSeconds, show_figures, show_all_forcefigures):
+
+    for indexRun, run in enumerate(runs):
+        for config in resultDict[indexRun].configuration:
+            # IF STABLE, THEN CALCULATE MEAN WAVE DRIFT FORCE:
+            if config.stable:
+                forces = comflow.TabularData(config.runpath + '\proc_1\interactive_motion0001.dat')
+
+                time = forces["Time"]
+
+                start = cutoffSeconds[indexRun]
+                start_idx = np.abs(time - start).argmin()
+                #stop_idx = np.abs(time - end).argmin()
+                # time = time[start_idx:stop_idx]
+                # Fx = forces["Fx"][start_idx:stop_idx]
+
+                time = time[start_idx:-1]
+                Fx = forces["Fx"][start_idx:-1]
+
+                f_input = (2 * np.pi) / config.wavePeriod
+                #make regular timestamp and filter force signal
+                time_regular = np.linspace(time[0], time[-1], len(time))
+                Fx_regular = np.interp(time_regular, time, Fx)
+                Fx_filter2 = pymarin_timedom.filtering.fft_filter(Fx_regular, lowpass=2 * f_input, integrate=None,differentiate=None,dt=time_regular[1] - time_regular[0], fs=None,use_extension=True, axis=- 1, minspan=2)
+
+
+
+                zero_crossings = np.where(np.diff(np.sign(Fx_filter2)))[0]
+                upcrossing = []
+                for i in zero_crossings:
+                    try:
+                        if Fx_filter2[i - 3] < 0 and Fx_filter2[i + 3] > 0:  # check if it is upcrossing
+                            upcrossing.append(time_regular[i])
+                    except:
+                        continue
+
+                try:
+                    fully_dev_upcrossing_idx = np.abs(np.asarray(upcrossing) - 75).argmin()
+                    start = upcrossing[fully_dev_upcrossing_idx]
+                    end = upcrossing[-1]
+                    start_idx = np.abs(time - start).argmin()
+                    stop_idx = np.abs(time - end).argmin()
+
+                    # now start and end values are known, restart the whole process
+                    time = time[start_idx:stop_idx]
+                    Fx = Fx[start_idx:stop_idx]
+                    time_regular = np.linspace(time[0], time[-1], len(time))
+                    Fx_regular = np.interp(time_regular, time, Fx)
+                    Fx_filter2 = pymarin_timedom.filtering.fft_filter(Fx_regular, lowpass=2 * f_input, integrate=None,differentiate=None,dt=time_regular[1] - time_regular[0], fs=None,use_extension=True, axis=- 1, minspan=2)
+                    #Fx_filter_withouth_low = pymarin_timedom.filtering.fft_filter(Fx_regular, highpass=0.1 * f_input, integrate=None,differentiate=None,dt=time_regular[1] - time_regular[0], fs=None,use_extension=True, axis=- 1, minspan=2)
+
+                    #Fx_mean_withouth_low = np.mean(Fx_filter_withouth_low)
+                    Fx_mean = np.mean(Fx_regular)
+                    config.mean_wave_drift_force = Fx_mean
+
+                except:
+                    Fx_mean = np.mean(Fx)
+                    config.mean_wave_drift_force = Fx_mean
+                    print('configuration {} had no zero-crossings, so mean off raw force signal taken'.format(config.number))
+
+                if show_all_forcefigures==1:
+                    plt.figure()
+                    plt.title('configuration_{}'.format(config.number))
+                    plt.plot(time, Fx_regular, label='unfiltered force signal', color='r')
+                    plt.plot(time_regular, Fx_filter2, label='filtered force signal')
+                    #plt.plot(time_regular, Fx_filter_withouth_low, label='filtered low freq force signal', color='green')
+                    plt.axhline(y=Fx_mean, color='r', linestyle='-', label='mean')
+                    #plt.axhline(y=Fx_mean_withouth_low, color='green', linestyle='-', label='mean_without low')
+                    plt.legend()
+                    plt.show()
+
+        if show_figures==1:
+            plt.figure(figsize=(10,8))
+            # manager = plt.get_current_fig_manager()
+            # manager.full_screen_toggle()
+            plt.title('Forces of {}'.format(run))
+            plt.grid()
+            for x, singleForce in enumerate(resultDict[indexRun].configuration):
+                if singleForce.mean_wave_drift_force:
+                    plt.scatter(x, singleForce.mean_wave_drift_force)
+                    plt.text(x, singleForce.mean_wave_drift_force, singleForce.number)
+            plt.xlabel('configuration')
+            plt.ylabel('force [N]')
+            plt.show()
+
+    return resultDict
+
+def transmitted_wave_height(resultDict, runs, cutoffSeconds, show_figures):
+
+    for indexRun, run in enumerate(runs):
+
+        wave_onlyFolder = glob.glob(resultDict[indexRun].path + '/wave_only')[0]
+        already_calculated=0
+
+        for config in resultDict[indexRun].configuration:
+            # IF STABLE, THEN CALCULATE TRANSMITTED WAVE HEIGHT:
+            if config.stable:
+                filePath = [config.runpath, wave_onlyFolder]
+
+                start_time = cutoffSeconds[indexRun]  # [s] time before is thrown away
+
+                #bounds where transmitted wave height is averaged from
+                xmin_transmission = 450
+                xmax_transmission = 580
+
+
+                pathList =[]
+                WH=[]
+                t=[]
+                stop=[]
+                #extract data from .h5 file
+                for path in filePath:
+                    hf = h5py.File(path +'/proc_1/waterheight.h5')
+                    WH.append(hf["data"]["wh"][:])
+                    t.append(hf["data"]["t"][:])
+                    x = hf["data"]["x"][:]
+                    pathList.append(path)
+                    stop.append((np.abs(t[-1] - start_time)).argmin())
+
+                i_1 = np.argmax(x >= xmin_transmission)
+                i_2 = np.argmax(x >= xmax_transmission)
+
+
+                #LATER MOVE TO SEPERATE FIGURE-FUNCTION!
+                if show_figures==1:
+                    plt.figure()
+                    for i, file in enumerate(filePath):
+                        plt.plot(t[i][stop[i]:-1], WH[i][:, 0, i_1][stop[i]:-1], label="{}".format(file))
+                    plt.title('water elevation on x = {} m'.format(int(xmin_transmission)))
+                    plt.xlabel('Time [s]')
+                    plt.ylabel('H [m]')
+                    plt.legend()
+                    plt.show()
+
+                    plt.figure()
+                    for i, file in enumerate(filePath):
+                        plt.plot(t[i][stop[i]:-1], WH[i][:, 0, i_2][stop[i]:-1], label="{}".format(file))
+                    plt.title('water elevation on x = {} m'.format(int(xmax_transmission)))
+                    plt.xlabel('Time [s]')
+                    plt.ylabel('H [m]')
+                    plt.legend()
+                    plt.show()
+
+
+                segment = [start_time, config.tmax]
+                T_p = config.wavePeriod
+                if not ((segment[1] - segment[0]) / T_p).is_integer():
+                    segment[1] = int(np.floor((segment[1] - segment[0]) / T_p) * T_p + segment[0])
+
+                for filecount, wh in enumerate(WH):
+                    if 'wave_only' in filePath[filecount] and already_calculated==0:
+                        time = t[filecount]
+                        H=[]
+                        for j in range(i_1, i_2):  # loop over all x positions
+
+
+                            eta = wh[:, 0, j]
+
+                            dt = 0.01
+                            time_i = np.arange(segment[0], segment[1],dt)  # time vector for interpolation (NB should be within the boundaries set by vector t)
+                            f = interpolate.interp1d(time, eta)
+                            eta_i = f(time_i)  # interpolated water surface
+
+                            # ---- Compute ensemble-average:
+                            etamat = eta_i.reshape(round((segment[1] - segment[0]) / T_p), round(T_p / dt))
+                            t_ens = np.arange(0, T_p, dt)  # t of ensemble-averaged matrix
+                            eta_ens = np.mean(etamat, axis=0)  # Ensemble-averaged matrix
+                            eta_ens_std = np.std(etamat, axis=0)  # Standard deviation over ensemble-averaged matrix
+
+                            # Calculate statistics
+                            H_ens = np.max(eta_ens) - np.min(eta_ens)  # Wave height
+                            eta_rms = np.std(eta_ens)
+
+                            H.append(H_ens) # all wave heights of every position between xmin_transmission and xmax_transmission
+                        H_i =  np.mean(H)
+                        already_calculated = 1
+
+                        #config.H_i = H_i
+
+
+                    if 'configuration' in filePath[filecount]:
+                        time = t[filecount]
+                        H = []
+                        for j in range(i_1, i_2):  # loop over all x positions
+
+                            eta = wh[:, 0, j]
+
+                            dt = 0.01
+                            time_i = np.arange(segment[0], segment[1],
+                                               dt)  # time vector for interpolation (NB should be within the boundaries set by vector t)
+                            f = interpolate.interp1d(time, eta)
+                            eta_i = f(time_i)  # interpolated water surface
+
+                            # ---- Compute ensemble-average:
+                            etamat = eta_i.reshape(round((segment[1] - segment[0]) / T_p), round(T_p / dt))
+                            t_ens = np.arange(0, T_p, dt)  # t of ensemble-averaged matrix
+                            eta_ens = np.mean(etamat, axis=0)  # Ensemble-averaged matrix
+                            eta_ens_std = np.std(etamat, axis=0)  # Standard deviation over ensemble-averaged matrix
+
+                            # Calculate statistics
+                            H_ens = np.max(eta_ens) - np.min(eta_ens)  # Wave height
+                            eta_rms = np.std(eta_ens)
+
+                            H.append(H_ens)  # all wave heights of every position between xmin_transmission and xmax_transmission
+                        H_t = np.mean(H)
+
+                        config.H_t = H_t
+
+                config.H_i=H_i
+                K_t = H_t/H_i
+                print('configuration {} has K_t = {}'.format(config.number, K_t))
+
+    return resultDict
+
+
+
+def extract_result_data(run):
+    with open('../output_files/data_{}'.format(run), 'rb') as f:
+        data = pickle.load(f)
+
+    return data
+
+
+def mean_wave_drift_force_floating_island_strip(H_incident):
+
+    W = 45  # [m] width island modules
+    h = 23  # [m] water depth
+    d = 8  # [m] draught island modules
+    T = 10.4  # [s] wave period
+    L = define_L(T)  # [m] wave length
+    k = (2 * np.pi) / L  # [1/m] wave
+
+
+
+
+
+
+
+    H_i = []  # list of wave heights in front of each individual module
+    H_t = []
+    H_r = []
+    F = []  # list of forces on each island module
+
+    H_i.append(H_incident)
+
+    # Macagno formula
+    K_t_mg = 1. / np.sqrt(1 + ((k * W * np.sinh(k * h)) / (2 * np.cosh(k * h - k * d))) ** 2)
+
+    for i in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+        H_i.append(float(K_t_mg * H_i[i - 1]))
+        H_t.append(H_i[-1])
+        H_r.append(np.sqrt(H_i[i - 1] ** 2 - H_t[-1] ** 2))
+
+        #print('Island module {} has H_i = {}, H_r = {} and H_t = {}'.format(i, round(H_i[i - 1], 2), round(H_r[i - 1], 2),round(H_t[i - 1], 2)))
+
+        F.append(float((1 / 16) * (H_i[i - 1] ** 2 + H_r[i - 1] ** 2 - H_t[i - 1] ** 2) * 1025 * 9.81 * (1 + (2 * k * h) / np.sinh(2 * k * h))))
+        #print('Island module {} experiences {} N of mean wave drift force'.format(i, round(F[-1], 2)))
+
+    total_F = sum(F) * 0.8  # per unit width
+
+    return total_F
+
+
+\end{lstlisting}
+\end{mdframed}
+
+
+
+
+
+
+
+
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Functions used in setting up simulations ., label=script:setting up simulations]
+
+    
+def geometry_costs_function(T,W,front_fraction,top_fraction,verschuiving,WL,mass_bw,h,x):
+
+    under_slope_area = 0
+    right_area = 0
+    dx = x[1]-x[0]
+    for i, single_h in enumerate(h):
+        under_slope_area += abs(h[i])*dx
+
+    block_area_bw = W*T
+
+    right_area+= W*top_fraction* (T - T*front_fraction)
+    under_area_bw = W*T*front_fraction
+
+    total_area = (under_area_bw+right_area+under_slope_area)
+
+    mass_steel = 5407/9300 * mass_bw        #source:s@s
+    mass_concrete = 3893/9300 * mass_bw     #source:s@s
+
+    fraction_area_2steel =      (right_area+under_area_bw)  / (total_area)         #fraction of area where steel is 2 euro/kg
+    fraction_area_var_steel =   (under_slope_area)          / (total_area)          #fraction area where steel is varying euro/kg
+
+    #calculation height variable costs (from 2 to 4 eur/kg, source: S@S)
+    alpha = np.arctan((T-T*front_fraction)/(W-W*top_fraction)) * (180/np.pi)
+    if alpha<45:
+        var_steel_price = 4-(2/45)*alpha
+    elif alpha>=45:
+        var_steel_price = (2/45) * alpha
+
+    costs_steel = mass_steel*(2*fraction_area_2steel + var_steel_price*fraction_area_var_steel)
+    costs_concrete = mass_concrete * 0.775
+
+    geometry_costs = costs_steel + costs_concrete
+
+    return geometry_costs
+
+
+
+def define_cg(L,h):
+
+    k = 2*np.pi/L
+    cp = np.sqrt((9.81/k)*np.tanh(k*h))
+    cg=0.5*cp*(1+ (2*k*h)/np.sinh(2*k*h))
+
+    return cg, k
+
+def define_L(t): #determine the wave length to normalise x in plot, input=period
+    def f(L, T=t):
+        return (9.81*T**2)/(2*np.pi) * np.tanh(2*np.pi*23/L) - L
+    L = fsolve(f,  70)
+    return L
+    
+\end{lstlisting}
+\end{mdframed}
+

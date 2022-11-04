@@ -1,0 +1,71 @@
+\begin{titlepage}
+
+\begin{center}
+
+%% Print the subtitle
+{\makeatletter
+\ifdefvoid{@Thesis () for the degree of MSc in Marine Technology in the specialisation of \\Ship Hydrodynamics}{}{\titlestyle\fontsize{20}{20}\selectfont}
+\makeatother}
+
+\bigskip
+
+%% Print the title
+{\makeatletter
+\largetitlestyle\fontsize{25}{25}\selectfont\@title
+\makeatother}
+
+%% Print the subtitle
+{\makeatletter
+\ifdefvoid{\@subtitle}{}{\titlestyle\fontsize{20}{20}\selectfont\@subtitle}
+\makeatother}
+
+\bigskip
+\bigskip
+
+by
+
+\bigskip
+\bigskip
+
+%% Print the name of the author
+{\makeatletter
+\largetitlestyle\fontsize{25}{25}\selectfont\@author
+\makeatother}
+
+
+
+
+\vfill
+
+%% Print some more information at the bottom
+\begin{tabular}{ll}
+    \textbf{Thesis comittee:}\\
+    Chair \& TU supervisor: & Dr. ir. P.R. Wellens \\
+    Second TU supervisor: & Dr. ir. B. Hofland\\
+    Company supervisor: & Dr. ir. J van der Zanden \\
+    Institution: & Delft University of Technology \\
+    Place: & Faculty of Mechanical, Maritime and Materials Engineering, Delft \\
+    %Project Duration: & Month, Year - Month, Year\\
+    \\
+    \textbf{Author Details}\\
+    Name: & Mike Blom\\
+    Student number: & 4381718\\
+    \\
+     \textbf{Reportnumber:}
+     &MT.21/22.049.M
+    
+\end{tabular}
+
+\vspace{1cm}
+%\small{Cover Image: Description + Source}
+
+\end{center}
+
+%% Insert the TU Delft logo at the bottom of the page
+\begin{tikzpicture}[remember picture, overlay]
+    \node at (current page.south)[anchor=south,inner sep=10pt]{
+        \includegraphics[width=0.65\linewidth]{layout/tudelft/tudelft_marin_black_logo.PNG}
+    };
+\end{tikzpicture}
+
+\end{titlepage}

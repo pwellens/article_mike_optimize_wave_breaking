@@ -1,0 +1,569 @@
+\chapter{Python scripts for setting up simulations}
+\label{app: scripts for setting up simulations}
+
+% \lstset{language=python,
+%                 basicstyle=\ttfamily,
+%                 numbers=left,
+%                 breaklines=true,
+%                 stepnumber=1,
+%                 showstringspaces=false,
+%                 tabsize=1,
+%                 breakatwhitespace=false,
+%                 keywordstyle=\color{blue}\ttfamily,
+%                 stringstyle=\color{red}\ttfamily,
+%                 commentstyle=\color{applegreen}\ttfamily,
+% }
+% \begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+% \begin{lstlisting}[linewidth=\columnwidth,caption=Functions used in setting up simulations ., label=script:setting up simulations]
+
+    
+% \end{lstlisting}
+% \end{mdframed}
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Script used for creating directories on cluster ., label=script: creating directories script]
+
+import numpy as np
+import os
+
+parameters = np.loadtxt('../input_files/parameters_DE.csv', skiprows=0, delimiter=',')
+number_of_configurations = len(parameters)
+print('making directory for {} configurations and a wave only case'.format(number_of_configurations))
+
+
+if not os.path.exists('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations'):
+    os.makedirs('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/wave_only/input_files')
+
+
+for i, geometry in enumerate(parameters):
+    config = int(geometry[0])
+    os.makedirs('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/configuration_{}/input_files'.format(config))
+
+
+    
+\end{lstlisting}
+\end{mdframed}
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Script to put job.sh file in all directories ., label=script: job file in directory]
+
+import os
+import shutil
+
+def find_files(filename, search_path, replacement_file):
+    result = []
+
+    for root, dir, files in os.walk(search_path):
+
+        #replace jobfile when old jobfile is already there
+        if filename in files:
+            print('job.sh replaced in {}'.format(root))
+            os.remove(os.path.join(root,filename))
+            shutil.copy(replacement_file,root)
+
+        #place jobfile when jobfile is NOT ther
+        if filename not in files and 'configuration' in root and 'input_files' not in root:
+            print('job.sh put in {}'.format(root))
+            shutil.copy(replacement_file, root)
+
+        elif filename not in files and 'wave_only' in root and 'input_files' not in root:
+            print('job.sh put in {}'.format(root))
+            shutil.copy(replacement_file, root)
+
+    return result
+
+
+find_files('job.sh',  '//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations','../input_files/job.sh')
+    
+\end{lstlisting}
+\end{mdframed}
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption= Script for creating comflow.cfi and  breakwater.in files ., label=script: creating comflow.cfi and breakwater.in]
+
+import numpy as np
+import os
+import time
+import matplotlib.pyplot as plt
+from running_simulations_functions import CoB, parabolic_beach, radius_of_pitch_inertia, bathymetry2geodef, restoring_pitch_moment
+
+filedir = os.getcwd()
+
+# ---- Geometries input:
+parameters = np.loadtxt(filedir + '/../input_files/parameters_DE.csv', skiprows=0, delimiter=',')
+rho_w = 1000 #[kg/m3] mass water
+show_figure = 0
+
+number_of_configurations = len(parameters)
+for i, geometry in enumerate(parameters):
+    configuration   = int(geometry[0])
+    T               = geometry[1]
+    W               = geometry[2]
+    front_fraction  = geometry[3]
+    top_fraction    = geometry[4]
+    radius          = geometry[5]
+    WL              = geometry[6]
+
+    ### PART 1: CALCULATE PARABOLIC BEACH
+    if top_fraction != 1 and front_fraction != 1:
+        # define parabolic beach through 3 points
+        h, x = parabolic_beach(radius, T, W, front_fraction, top_fraction, WL)
+    else:
+        h = [0, 0]
+        x = h
+
+
+
+    ### PART 2: MAKE INPUT FILE comflow.cfi
+    CoBx, CoBz, mass_bw, area_underwater = CoB(T, W, front_fraction, top_fraction, WL, h, x)
+    print(CoBx, CoBz)
+    k_yy = radius_of_pitch_inertia(T,W,front_fraction,top_fraction,WL,rho_w, h,x, CoBx, CoBz)
+    c_dd = restoring_pitch_moment(W, top_fraction, WL, h ,x, CoBx, CoBz, area_underwater)
+
+    input_cfi_file          = open(filedir + '/../input_files/comflow.cfi', 'r')
+    input_cfi_file_data     = input_cfi_file.read()
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:wave_onlytag1]', '')
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:wave_onlytag2]', '')
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:coupling_switch1]', '<coupling>')
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:coupling_switch2]', '</coupling>')
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch1]', '<subgrid')
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch2]', '</subgrid>')
+
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:bot1]', str(-T-WL-20))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:top1]', str(-WL+20))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:W1]', str(405 - W - 20))
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:bot2]', str(-T-WL-10))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:top2]', str(-WL+10))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:W2]', str(405 - W - 10))
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:bot3]', str(-T-WL-5))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:top3]', str(-WL+5))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:W3]', str(405 - W - 5))
+    if T>5:
+        input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch3]', '<!--subgrid')
+        input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch4]', '</subgrid-->')
+    else:
+        input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch3]', '<subgrid')
+        input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch4]', '</subgrid>')
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:startx]', str(405 - W*top_fraction))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:startz]', str(-WL))
+
+
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:mass]', str(mass_bw))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:k_yy]', str(k_yy))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGx]', str(CoBx))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGz]', str(CoBz))
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGx_to_xfender]', str(W*top_fraction - CoBx))
+
+    # if WL>0:
+    input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGz_to_zfender]', str(CoBz - WL))
+    # else:
+    #     input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGz_to_zfender]', str(-CoBz - abs(WL)))
+
+    # if h[0] < WL: #if slope crosses waterline
+    #input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGz_to_zfender]', str(-CoBz - abs(WL)))
+
+    # else:
+    #     input_cfi_file_data = input_cfi_file_data.replace('[!TAG:CoGz_to_zfender]', str(CoBz + abs(WL)))
+
+
+    fp4 = open('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/configuration_{}/input_files/comflow.cfi'.format(configuration), 'w')
+    fp4.write(input_cfi_file_data)
+    fp4.close()
+    print('comflow.cfi file made for configuration {}'.format(configuration))
+    print('')
+
+    ### PART 3: MAKE GEOMETRY FILE
+    # plot breakwater
+    plt.figure(figsize=([5,1.5]))
+    ax = plt.subplot(1,1,1)
+    ax.plot((x[0]-5, x[0]+W+5), (0,0), '-b')                            #waterline
+    ax.plot(x,h-WL,'-k',lw=2)                                           #slope
+    ax.plot((x[0]+W,x[0]+W),(-T-WL,0-WL),'-k',lw=2)                     #backside
+    ax.plot((x[-1], x[-1]+top_fraction*W),(0-WL,0-WL),'-k',lw=2)        #top (c)
+    ax.plot((x[0], x[0]),(h[0]-front_fraction*T-WL,h[0]-WL),'-k',lw=2)  #frontside (a)
+    ax.plot((x[0],x[0]+W),(-T-WL,-T-WL),'-k',lw=2)                      #bottom
+    ax.set_aspect(aspect='equal')
+    ax.set_xlabel(('x [m]'))
+    ax.set_ylabel(('z [m]'))
+    plt.savefig('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/configuration_{}/input_files/breakwater_geometry{}.pdf'.format(configuration,configuration), dpi=150)
+    if show_figure == 1:
+        plt.show()
+    plt.close()
+
+    bathymetry2geodef(x, h, "breakwater_geometry.in", configuration, T, W, front_fraction, top_fraction, WL)
+
+
+
+### PART 4: INPUT FILE comflow.cfi FOR WAVE ONLY CASE
+input_cfi_file          = open(filedir + '/../input_files/comflow.cfi', 'r')
+input_cfi_file_data     = input_cfi_file.readlines()
+
+# input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch1]', '<!--subgrid')
+# input_cfi_file_data = input_cfi_file_data.replace('[!TAG:subgrid_switch2]', '</subgrid-->')
+
+for i, line in enumerate(input_cfi_file_data):
+    if '[!TAG:subgrid_switch1]' in line:
+        input_cfi_file_data[i] = input_cfi_file_data[i].replace('[!TAG:subgrid_switch1]', '<!--subgrid')
+        input_cfi_file_data[i] = input_cfi_file_data[i].replace('[!TAG:subgrid_switch2]', '</subgrid-->')
+    if '<coupling>' in line:
+        index_begin_erase = i
+    if '</coupling>' in line:
+        index_end_erase = i
+
+del input_cfi_file_data[index_begin_erase:index_end_erase+1]
+
+fp4 = open('//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/wave_only/input_files/comflow.cfi'.format(i), 'w')
+fp4.writelines(input_cfi_file_data)
+fp4.close()
+print('comflow.cfi file made for wave_only')
+
+
+
+    
+\end{lstlisting}
+\end{mdframed}
+
+\lstset{language=python,
+                basicstyle=\ttfamily,
+                numbers=left,
+                breaklines=true,
+                stepnumber=1,
+                showstringspaces=false,
+                tabsize=1,
+                breakatwhitespace=false,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{applegreen}\ttfamily,
+}
+\begin{mdframed}[backgroundcolor=light-gray, roundcorner=10pt,leftmargin=1, rightmargin=1, innerleftmargin=0, innertopmargin=7,innerbottommargin=0, outerlinewidth=1, linecolor=light-gray]
+\begin{lstlisting}[linewidth=\columnwidth,caption=Functions used in setting up simulations ., label=script:setting up simulations]
+import numpy as np
+import sys
+import matplotlib.pyplot as plt
+from sympy import symbols, Eq, solve
+import os
+
+
+def parabolic_beach(radius, T, W, front_fraction, top_fraction, WL):
+    T_acc = front_fraction*T
+    W_acc = top_fraction*W
+
+    zA = T_acc-T
+    xA = -(W-W_acc)
+
+    zB = 0
+    xB = 0
+
+    x = [xA, xB]
+    z = [zA, zB]
+
+    h, k = symbols('h k')
+
+    eq1 = Eq( ((xA - h)**2 + (zA - k)**2), radius**2 )
+    eq2 = Eq( ((xB - h)**2 + (zB - k)**2), radius**2 )
+
+    sol_dict = solve((eq1, eq2), (h, k))
+
+    for i in range(2):
+        if sol_dict[0][-1]>sol_dict[1][-1]:
+            uppercenter =  sol_dict[0]
+            downcenter = sol_dict[1]
+        else:
+            uppercenter = sol_dict[1]
+            downcenter = sol_dict[0]
+
+
+    x_line = np.linspace(xA, xB, 1000)
+    z_line = []
+    for x_single in x_line:
+        z_line.append(downcenter[1] + 0.5*np.sqrt(float(4*downcenter[1]**2 - 4*(downcenter[1]**2 - radius**2 + (x_single-downcenter[0])**2))))
+
+
+
+    return z_line, x_line
+
+def CoB(T,W,front_fraction, top_fraction, WL, h ,x):
+
+    if abs(WL)< T*(1-front_fraction) or WL>0: #if waterline is above or on slope
+        if WL>0:
+            WL_i = 0
+        else:
+            WL_i = WL
+        x_i = x + W * (1 - top_fraction)
+        h_i = h + T * (1 - front_fraction)
+
+        dx = x_i[1] - x_i[0]
+
+        #area 1: area unders slope beneath the waterline
+        #area 2: area under slope above the waterline
+        area_1 =0
+        area_2=0
+        area_z_sum = 0
+        area_x_sum = 0
+        area_x2_sum = 0
+        for i, single_h in enumerate(h_i):
+            if single_h<h_i[-1]-abs(WL_i):
+                A = h_i[i]*dx     #squared meters of cell
+                d = 0.5*h_i[i]    #distance to middle cell
+
+                area_1 += A
+                area_z_sum += A*d
+                area_x_sum += A*x_i[i]
+
+            elif single_h>h_i[-1]-abs(WL_i):
+                A = dx* (T*(1-front_fraction) - abs(WL_i))
+                d = 0.5* (T*(1-front_fraction) - abs(WL_i))
+
+                area_2 += A
+                area_x2_sum += A*x_i[i]
+
+        z1 = 0
+        x1 = 0
+        if area_1 != 0:
+            z1 = area_z_sum/area_1
+            x1 = area_x_sum/area_1
+
+
+        z2 = 0.5* (T*(1-front_fraction) - abs(WL_i))
+        x2 = 0
+        if area_2 != 0:
+            x2 = area_x2_sum/area_2
+
+
+        #area_3 (right next to slope, under horizontal top part)
+        area_3 = (T*(1-front_fraction)-abs(WL_i))*W*top_fraction
+        z3 = z2
+        x3 = W - 0.5*W*top_fraction
+
+        #area 4 (underneath box)
+        area_4 = W*T*front_fraction
+        z4 = -0.5*T*front_fraction
+        x4 = 0.5*W
+
+        CoBx = (area_1*x1 + area_2*x2 + area_3*x3 + area_4*x4)/(area_1 + area_2 + area_3 + area_4)
+        CoBz = (area_1*z1 + area_2*z2 + area_3*z3 + area_4*z4)/(area_1 + area_2 + area_3 + area_4)
+        mass_bw = (area_1 + area_2 + area_3 + area_4) * 1000
+
+        area_underwater = area_1 + area_2 + area_3 + area_4
+
+        CoBz += T * front_fraction
+
+
+
+    else: #if waterline is under slope
+        area_4 = (T-abs(WL))*W
+        x4 = 0.5*W
+        z4 = 0.5*(T-abs(WL))
+
+        CoBx = x4
+        CoBz = z4
+        mass_bw = (area_4) * 1000
+
+        area_underwater = area_4
+
+    #change to domain space
+    CoBx+=-W * (1 - top_fraction)
+    CoBz -= T
+
+
+
+    return CoBx, CoBz, mass_bw, area_underwater
+
+def restoring_pitch_moment(W, top_fraction, WL, h ,x, CoBx, CoBz, area_underwater):
+
+    if h[0]<WL:
+        #find index where slope is crossing waterline
+        index_wl = np.absolute(h - WL).argmin()
+
+        L1 = abs(x[index_wl])
+        L2 = W*top_fraction
+        L = L1 + L2
+        d = L1 + 0.5*L2 - CoBx
+
+        #use parallel axes theorem to find total area moment of inertia (per unit width)
+        I_yy = L**3/12 + L*d**2
+
+    else:
+        L = W
+        d = (W*(1-top_fraction) + CoBx) - W/2 #distance from beginning geometry to CoBx - distance from beginning geometry to halve width
+
+        I_yy = L**3/12 + L*d**2
+    print('I_yy = {} m4'.format(round(I_yy,2)))
+    BM = I_yy/area_underwater
+    print('BM = {} m'.format(round(BM,2)))
+
+    KB = CoBz
+    KG = KB
+    GM = KB + BM - KG
+    c_dd = 1000*9.81*area_underwater*GM
+
+    print('restoring pitch moment = {} Nm/unit width'.format(round(c_dd,2)))
+    return c_dd
+
+def radius_of_pitch_inertia(T,W,front_fraction,top_fraction,WL,rho_w, h,x, CoBx, CoBz):
+    # area 3
+    area_3 = 0
+    if front_fraction!=1 and top_fraction!=1: #otherwise slope doesnt exist
+        #area 1
+        area_1 = W * top_fraction * T * (1 - front_fraction)
+        d_x = 0.5*W*top_fraction - CoBx
+        d_z = T*(0.5-0.5*front_fraction) - CoBz
+        d = np.sqrt( float((d_x)**2 + (d_z)**2) )
+        I_yy_1 = ((1/12)* ((W*top_fraction)**2 + (T*(1-front_fraction))**2) + d**2)
+
+
+        #area 2
+        area_2 = W * T * front_fraction
+        d_x = -(0.5*W-W*top_fraction) - CoBx
+        d_z = 0.5*T*front_fraction - CoBz
+        d = np.sqrt(float((d_x) ** 2 + (d_z) ** 2))
+        I_yy_2 = ((1/12)* (W**2 + (T*front_fraction)**2) + d**2)
+
+        #area 3
+        #define 0 at beginning of slope
+        h += T * (1 - front_fraction)
+
+        dx = x[1]-x[0]
+        I_yy_3 = 0
+        area_3 = 0
+        for i, single_h in enumerate(h):
+            d_x = abs(x[i] - CoBx)
+            d_z = (T*front_fraction + 0.5*h[i]) - CoBz
+            A = dx * h[i]
+            d = np.sqrt( float((d_x) ** 2 + (d_z) ** 2) )
+            I_yy_3 += ((1 / 12) * (abs(single_h) ** 2 + dx ** 2)*A + d**2*A)
+            area_3 += abs(single_h * dx)
+        I_yy_3=I_yy_3/area_3
+
+        k_yy = np.sqrt( float( (I_yy_1*area_1 + I_yy_2*area_2 + I_yy_3*area_3) / (area_1+area_2+area_3)) )
+
+    else:
+        k_yy = np.sqrt((1/12)*(W**2 + T**2))
+
+    return k_yy
+
+
+def bathymetry2geodef(x,z,filename, config, T,W,front_fraction,top_fraction,WL):
+    # computational domain
+    zmin = np.amin(z)
+    zmax = np.amax(z)
+    ymin = -1.
+    ymax =  1.
+    xmin = x[0]
+    xmax = x[-1]
+
+    extents = [xmin, xmax, ymin, ymax, zmin, zmax]
+
+    #print("- extents: {}".format(extents))
+
+    filedir = os.getcwd()
+
+    with open("//storage04/marclus4/home/mblom/mike_simulaties/03_TESTS/optimization_clusterfolder/ComFLOW_simulations/configuration_{}/input_files/breakwater_geometry.in".format(config),"w") as file:
+        if top_fraction != 1 and front_fraction != 1:
+            for i in range(1,x.size):
+                if z[i]<zmin+1e-8:
+                    file.write("2 0 0\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymin, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymin, z[i-1] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymin, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymax, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymax, z[i-1] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymax, zmin ]))+"\n")
+                elif z[i-1]<zmin+1e-8:
+                    file.write("2 0 0\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymin, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymin, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymin, z[i] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymax, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymax, zmin ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymax, z[i] ]))+"\n")
+                else:
+                    file.write("3 0 0\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymin, zmin]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymin, zmin]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymax, zmin]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymax, zmin]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymin, z[i-1] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymin, z[i  ] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i  ], ymax, z[i  ] ]))+"\n")
+                    file.write(" ".join(map(str, [ x[i-1], ymax, z[i-1] ]))+"\n")
+        #BOTTOM BLOCK
+        if front_fraction>0:
+            file.write("3 0 0\n")
+            file.write(" ".join(map(str, [x[0],                     ymin,   z[0]-T*front_fraction])) + "\n")
+            file.write(" ".join(map(str, [x[0]+W,                   ymin,   z[0]-T*front_fraction])) + "\n")
+            file.write(" ".join(map(str, [x[0]+W,                   ymax,   z[0]-T*front_fraction])) + "\n")
+            file.write(" ".join(map(str, [x[0],                     ymax,   z[0]-T*front_fraction])) + "\n")
+            file.write(" ".join(map(str, [x[0],                     ymin,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[0]+W,                   ymin,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[0]+W,                   ymax,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[0],                     ymax,   z[0]])) + "\n")
+
+        #AFT BLOCK
+        if top_fraction>0:
+            file.write("3 0 0\n")
+            file.write(" ".join(map(str, [x[-1],                    ymin,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymin,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymax,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[-1],                    ymax,   z[0]])) + "\n")
+            file.write(" ".join(map(str, [x[-1],                    ymin,   0])) + "\n")
+            file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymin,   0])) + "\n")
+            file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymax,   0])) + "\n")
+            file.write(" ".join(map(str, [x[-1],                    ymax,   0])) + "\n")
+
+        # #CONNECTION BLOCK
+        # if top_fraction>0 and front_fraction>0:
+        #     file.write("3 0 0\n")
+        #     file.write(" ".join(map(str, [x[-1],                    ymin,   z[0]-T*front_fraction])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymin,   z[0]-T*front_fraction])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymax,   z[0]-T*front_fraction])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1],                    ymax,   z[0]-T*front_fraction])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1],                    ymin,   z[0]])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymin,   z[0]])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1]+W*top_fraction,    ymax,   z[0]])) + "\n")
+        #     file.write(" ".join(map(str, [x[-1],                    ymax,   z[0]])) + "\n")
+    
+\end{lstlisting}
+\end{mdframed}

@@ -1,0 +1,145 @@
+\documentclass{layout/tudelft-report}
+
+% Setting up the bibliography
+\usepackage[sorting=none, style=apa, natbib]{biblatex}
+%\usepackage[sorting=none]{biblatex}
+
+
+
+\addbibresource{report.bib}
+
+%% Additional packages
+\usepackage{pdfpages} % Insert .pdf directly as pages
+\usepackage[acronym]{glossaries}
+\usepackage{enumitem}
+\usepackage{hhline}
+\setlength{\parindent}{0pt}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{amsmath}
+\usepackage{listings}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{light-gray}{gray}{0.95} %the shade of grey that stack exchange uses
+\usepackage{mdframed} %nice frames
+\usepackage{longtable} 
+\usepackage{lscape} %to make appendix in landscape mode
+\usepackage{nameref} %ref to the name of the chapter 
+
+
+
+% \usepackage{aliascnt}
+% \newaliascnt{eqfloat}{equation}
+% \newfloat{eqfloat}{h}{eqflts}
+% \floatname{eqfloat}{Equation}
+
+%GLOSSARY input
+\makeglossaries
+%\newacronym{QTF}{QTF}{Quadratic Transfer Function}
+\input{frontmatter/glossarie_input}
+
+
+\usepackage[section]{placeins}
+
+
+
+%% Additional commands
+\renewcommand{\deg}{\si{\degree}\xspace}
+
+%%%%% Begin of document %%%%%
+
+\begin{document}
+
+%% Roman numerals
+\frontmatter
+
+%% Defining the main parameters
+\title{Optimising the Geometry of a Breakwater Connected to Large Floating Structures}
+\subtitle{Increasing the Feasibility of Floating Cities} % Two lines recommended
+\author{M. Blom}
+\subject{Master Thesis}
+
+\coverimage{figures/mike voorblad 4.pdf} % Aspect ratio of 2:3 (portrait) recommended
+\definecolor{title}{HTML}{4884d6} % Color for the title
+
+\makecover
+
+\input{frontmatter/title}
+
+%\input{frontmatter/quote}
+\input{frontmatter/preface}
+
+%\input{frontmatter/summary}
+
+\tableofcontents
+
+%% List of abbreviations, symbols, figures and tables
+\input{frontmatter/glossarie_input}
+
+
+\listoffigures
+\listoftables
+
+%% Arabic numerals
+\mainmatter
+
+\input{mainmatter/chapter-0Abstract}
+
+%glossary
+\printglossary[type=\acronymtype]
+
+
+\input{mainmatter/chapter-1Introduction}
+
+\input{mainmatter/chapter-2LiteratureReview}
+
+\input{mainmatter/chapter-3Methodology}
+
+\input{mainmatter/chapter-4Validation}
+
+\input{mainmatter/chapter-5.1WC1-DI1 captive}
+\input{mainmatter/chapter-5.1WC1-DI2 captive}
+\input{mainmatter/chapter-5.1WC2-DI1 captive}
+\input{mainmatter/chapter-5.2HydroAnalysisCaptive}
+
+\input{mainmatter/chapter-5.3Costs-WC1-DI1 captive}
+\input{mainmatter/chapter-5.3Costs-WC1-DI2 captive}
+\input{mainmatter/chapter-5.3EcoAnalysisCaptive}
+
+
+% \input{mainmatter/chapter-6.1 WC1 moving}
+% \input{mainmatter/chapter-6.2 WC2 moving}
+% \input{mainmatter/chapter-6.3Discussion_Conclusions moving}
+
+\input{mainmatter/chapter-7ConculsionRecommendations}
+
+
+
+
+%% Prevent urls running into margins in bibliography
+\setcounter{biburlnumpenalty}{7000}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{7000}
+
+%% Bibliography is numeric style
+\printbibliography[title=References]
+\addcontentsline{toc}{chapter}{References}
+
+
+%% Using letters for chapters
+\appendix
+
+\input{appendix/appendix-a}
+
+\input{appendix/appendix-b}
+
+\input{appendix/appendix-c} 
+
+\input{appendix/appendix-d}
+
+\input{appendix/appendix-e}
+
+\input{appendix/appendix-f}
+
+\end{document}

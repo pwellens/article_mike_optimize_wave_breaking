@@ -1,0 +1,142 @@
+\chapter{Conclusions and Recommendations}
+\label{ch: conclusions recommendations}
+
+\section{Conclusions}
+The aim of this thesis is to reduce the costs of mooring the floating island by connecting a structure to its wave-ward side with an optimised geometry in such a way that the mean wave drift forces are reduced. Therefore, a less expensive mooring system. This objective translated into a research question leads to the main research question of this thesis:
+
+\begin{enumerate}
+    \item How can the construction costs of a floating island be reduced by connecting a structure to its wave-ward side with an optimised geometry?
+\end{enumerate}
+
+In order to answer the main research question accurately, some sub-objectives need to be accomplished. This leads to the three sub-research questions of this thesis, and together with the main-research question, they lead the research. The sub-research questions are formulated as follows:
+
+\begin{enumerate}[resume]
+    \item What is the quality of the results of ComFLOW with the best possible settings?
+    \item How do wave attenuation and reduction of drift forces relate to the geometry of the breakwater?
+    \item How are the drift forces and the geometry of the breakwater quantified in mooring and construction costs, respectively?
+\end{enumerate}
+
+
+
+In this section, the answers on the sub-research questions are discussed first, because they are necessary to come up with an accurate answer on the main research question. 
+
+\paragraph{Quality of the results and settings of ComFLOW } The second research question, but first sub-research question is there do a validation of the numerical setup, to come up with the best settings of the \acrfull{cfd} code: ComFLOW. This is necessary to ensure that ComFLOW's results can be used in judging the breakwater performances. In addition to all the settings (which are summarised in Section \ref{sec: possible settings ComFLOW}), the key findings of this validation were:
+\begin{itemize}
+    \item A minimum of twenty cells is required on the height of the structure to give reliable results on the mean wave drift forces on the structure.
+    \item ComFLOW's results for the transmission coefficient with a varying box width follow the same trend as expected by the Macagno formula, which is a function derived from linear wave theory. Wave transmission is lower in ComFLOW than in linear wave theory: 7\% for small box widths (W=10 m) and increases to 32\% for large widths (W=100m). The wave reflection is higher: 91\% for the smallest box width and 4\% for the widest floaters. 
+    \item The wave energy dissipation characteristics of ComFLOW of all different grid sizes used in the comparison with the experiment were waves were plunging over a breaker bar showed results that were in compliance with the experiment.
+\end{itemize}
+
+
+\paragraph{Hydrodynamic performance breakwater}
+Since the optimal breakwater has to attenuate the wave energy, while having a low mean wave drift force as possible, the hydrodynamic optimisation is multi-objective. Plotting the two objectives (mean wave drift force and transmission coefficient) for all breakwaters gives a Pareto front, which is the set of non-dominated solutions, where each objective is considered as equally good, because the two objectives have different units. To see which breakwaters on the Pareto front are best at attenuating wave energy and which are best at minimising its mean wave drift force, research question number 3 is formulated.\\
+\\
+To minimise the mean wave drift force on the breakwaters, the most important parameter was its orientation with respect to the waterline. In Design Iteration 1 of Wave Condition 1, a total of 94 geometries were simulated in ComFLOW, of which 46 were completely submerged. Of the submerged ones, 35 (76\%) experienced a mean wave drift force in the opposite direction of wave propagation. And of those 35, 25 were able to attenuate 50 \% of the wave energy as well! For Wave Condition 2, the percentage of breakwaters that experienced a negative mean wave drift force was 85\%. An explanation for this negative mean wave drift force is sought by the set-up and set-down of the water level, which occur around breaking waves. If the wavelength is large compared to the size of the submerged breakwater, the set-down of the water level will be in front (at the wave-ward side) of the breakwater and the set-up at its lee-side. This will result in a difference in hydrostatic pressure and produces a net force at the structure, in the opposite direction of the waves\\
+\\
+The optima found by Design Expert based on minimising the mean wave drift force were either a shallow box-type structure relatively far below the water surface or a large structure closer to the waterline with a sloping beach on its wave-ward side, which induced the waves to break and thus dissipate wave energy. The latter structure was placed 0.9 m below the water surface for Wave Condition 1 (H$_i$ = 2.67 m) and 2.9 m for Wave Condition 2 (H$_i$ = 8.65 m). This turned out to be the same ratio of $\frac{1}{3}$. The length of this sloping beach has an optimum. When its too short and steep, more of the wave energy will be reflected instead of dissipated, which will lead to a higher mean wave drift force. When the sloping beach is too long, the set-up of the mean water level due to the breaking of the waves will be placed above the sloping beach. Then it will provide a contribution to the mean wave drift force in the same direction as the waves. This must be avoided by ensuring that the length of the sloping beach is shorter than the wave length. Best at attenuating wave energy on the Pareto front are large box-type structures with their top at the waterline. Also, whether a breakwater contains a sloping beach or not does not influence the wave attenuation performance, so it is a sure thing when optimising for both objectives, it will be better to include a sloping beach in the geometry of the breakwater.
+
+
+
+
+
+\paragraph{Cost Function}
+To make hard judgements whether a breakwater is optimal, the multi-objective optimisation has to become a single-objective optimisation by using the hydrodynamic performances of the breakwaters to compute it in a single performance: profit. A cost function is made to do this, which consists roughly out of two parts.\\
+\\
+The first part is to calculate the construction costs of the breakwater. The breakwater is assumed to be made up of concrete and steel, of which concrete has a price of 775 \texteuro/ton and steel prices range from 2000 to 4000 \texteuro/ton, depending on the amount of labour needed to build the structure. The second part of the cost function is to determine the cost reduction in mooring costs due to the presence of the breakwater. Therefore, the mean wave drift force of the breakwater is recorded in ComFLOW and the mean wave drift force of the island is estimated by scaling the mean wave drift force of the island without breakwater with $(H_t/H_i)^2$.
+
+
+\paragraph{Main} According to the cost function developed in this thesis, it is possible to generate a cost reduction by connecting another module to its wave-ward side, with a optimised geometry such that it attenuates the wave energy while having a low mean wave drift force. This added module will be referred to as a breakwater from now on in this section.\\
+\\
+From the research to answer the last sub-research question the costs of all breakwaters are known and the cost reduction in the mooring system they provide. The difference between the two, delivers a cost reduction. For some breakwaters, this cost reduction was positive and for others this was negative (i.e., when it is negative, the breakwater will provide an increase in costs). Breakwaters that performed best hydrodynamically turned out to have a negative cost reduction. In other words, their construction costs are more than the cost reduction of the mooring they provide. However, smaller breakwaters could provide a cost reduction. The optimal breakwater has a width of 10.0 metres, a depth of 9.6 metres, and a draught of 6.2 metres. Its wave-ward side is a sloping beach, crossing the waterline and induces the waves to break. Therefore, the wave energy is dissipated to achieve maximum wave attenuation (K$_t$ = 0.091) while having a rather low mean wave drift force of 9.0 kN/m. The mooring of the breakwater itself will cost 1.496,60 \texteuro / m and the construction costs of the structure itself are 17.273,31 \texteuro / m. However, the mooring of the island is now 3.345,08 \texteuro/m, while it was 46.419,76 \texteuro/m originally (without breakwater). 
+
+\begin{table}[H]
+\begin{tabular}{lll}
+\hline
+                              & withouth breakwater {[}k\texteuro/m{]} & with breakwater {[}k\texteuro/m{]}\\ \hline
+mooring costs island    {[}k\texteuro/m{]}      & 46.4                                                  & 3.3             \\
+mooring costs breakwater    {[}k\texteuro/m{]}  &                                                       & 1.5             \\
+construction costs breakwater {[}k\texteuro/m{]}&                                                       & 17.3            \\
+                              &                                                       &                 \\ \hline
+total:                        & 46.4                                                  & 22.1           
+\end{tabular}
+\end{table}
+
+The difference between total costs is 24.4 k\texteuro per unit width of the floating island. So, for the entire island, this results in a cost reduction of 9.8 M\texteuro. This is a reduction of 51\% in mooring costs. The total \acrshort{capex} costs of the floating island of Space@Sea were estimated to be 76,1 M\texteuro. Therefore, the breakwater can provide a cost reduction of 7.7\% on the total costs of the island. To obtain the same functioning island with land-filling at this location, the costs were estimated at 49,1 M\texteuro. So, even with the inclusion of a breakwater on the wave-ward side of a floating island, its alternative; land nourishment, is still more favourable. 
+
+
+\section{Recommendations}
+
+This section provides recommendations on how to do further research on this topic, or repeat it similarly with possibly more accurate solutions. 
+
+
+\begin{itemize}
+
+    \item In this thesis, the breakwater is assumed to be connected to the floating island. However, the floating island is excluded from the simulations in which the performance of the breakwaters was determined. This was done because the inclusion of the floating island in the simulations would result in very long execution times, which was undesirable because many breakwaters needed to be simulated in order to perform a proper optimisation. However, this brings some inaccuracies to the results of ComFLOW. 
+    \begin{itemize}
+        \item Firstly, when a structure is placed behind the breakwater, the transmitted wave would not have a free water surface where it can form a gravity wave over the entire water depth again. This would reduce the wave transmission and therefore, because of conservation of energy, increase the wave reflection. This would cause the mean wave drift force of the entire structure to be higher and also influence the breaking process of the incident waves. It would be useful to map this effect by including the floating island in the simulations 
+        \item Secondly, the set-up of the mean water level due to wave breaking behind the breakwater causes the mean wave drift force to be in the opposite direction of wave propagation. However, when a structure is placed behind the breakwater, this set-up would approximately have the same absolute contribution to the mean wave drift force to that structure, but in the opposite way (in the same direction as the wave propagation). Therefore, only set-down in front of the structure due to wave breaking can only deliver mean wave drift force in the opposite direction of wave propagation. In the current design at least, or the breakwater needs to be placed further from the floating island. 
+        \item And finally, the inclusion of the floating island will cause sloshing between the modules, which will influence the forces on the structure and therefore the motions as well. 
+    \end{itemize}
+
+    \item In this thesis, the effects of movements on some breakwaters were observed. However, due to a bug in the software and a shortage of time to resolve this, it was not possible to perform a proper moving design optimisation. It would be useful to still do this to see the effect on the design of the optimal breakwaters when motions are allowed. 
+
+    \item In the current setup, where the breakwater is connected to the floating island, the geometry of the breakwater is optimised to have a mean wave drift force as low as possible (since it was assumed that the large floating island would still experience a larger mean wave drift force the opposite direction). This mean wave drift force turned out to be negative for some geometries (in the opposite direction of wave propagation). However, a breakwater could also be designed while freely floating, a so-called stand-alone setup. When optimising for such a setup, the goal would be to have a mean wave drift force that is exactly zero. In other words, the system would not drift away and no mooring system is required. This would provide completely different results, and it would be interesting to see what geometries of the breakwaters would be able to achieve this. 
+    
+    \item The design optimisation in this thesis is done only for 2D breakwaters. When a breakwater is optimised in a 3D shape, it certainly would make the numerical simulations way more expensive, but it would also bring possibilities. 
+    \begin{itemize}
+        \item While in the 2D setup the waves can be reflected back to where they came from, it is not possible to reflect them slightly in another direction. In a 3D setup, this is possible. Then the floating island behind the breakwater is still sheltered from incoming waves, while experiencing a relatively low increase in mean wave drift force (in the same direction as wave propagation). Instead, part of this wave energy is translated into a perpendicular force on the structure. 
+        \item More interesting shapes could be used that induce more wave energy to dissipate, for example: roots, trees, oysters, or moving (maybe even energy-generating) parts.
+    \end{itemize}
+    
+    \item Since most of the captive submerged breakwaters had negative mean wave drift forces during the simulations of this thesis, it would be interesting to see if this was a physical and/or a full-scale effect. This could be investigated with an experiment in which the submerged captive breakwaters would interact with several wave conditions. 
+    
+
+    \item In reality, when a floating island including a breakwater is placed at sea, the structure will interact at almost all times with an irregular wave spectrum, which also changes constantly over time. Therefore, a breakwater needs to perform in dissipating energy from a wave with infinite variation of characteristics. The design optimisation done in this thesis for two wave conditions is a start in giving an overview of the optimal geometry of the breakwater to serve its purpose, but to deliver an end design, more phenomena need to be considered. One of which: an irregular sea state.
+    
+    \item For most of the breakwaters discussed in this thesis, the motions were restricted. The optimal breakwaters turned out to be below the waterline because they experienced mean wave drift forces in the opposite direction of wave propagation. These are interesting results academically, but in reality, fully submerged structures do not have the hydrostatic stability surfaced structures provide. In other words, it is difficult to keep submerged breakwaters around their mean orientation. It would be interesting to think about a construction of a submerged breakwater with certain floaters and/or sinkers that keep the structure in place so that it would be possible to realise such submerged breakwaters. 
+    
+    \item In the cost function made in this thesis that is used to optimise the shape of the breakwater, only initial capital expenditures (\acrshort{capex}) are used. Besides conducting studies to make this \acrshort{capex} cost function more accurate, it would be interesting to make a second cost function that maps the profit over time (\acrshort{opex}) due to the presence of the breakwater. Such \acrshort{opex} cost function would, for example, include: costs on maintenance of the breakwaters and improved work-ability of the island due to less motions. 
+
+    \item The total costs of the case of Space @ Sea island of the North Sea were estimated at 76,1 M\texteuro, while its alternative; land-filling, would cost approximately 49,1 M\texteuro. Even when the breakwater is included, the costs of the floating island will be approximately 66,3 M\texteuro. Therefore, land-filling would still be more favourable. However, with the increasing number of offshore wind turbine fields, floating farms, and probably also floating solar panels in the future, the available positions where sand can be nourished for islands becomes more limited. Therefore, this alternative might become more expensive in the future, which could make the floating island the preferred option. 
+    
+    %And when this floating island would be built, the breakwater would (according to the cost function presented in this thesis) provide a reduction of 7.7 \% on its capital expenditure at this particular location. 
+    %this decreae in costs already expends the locations hwere floating island is profitable
+
+\end{itemize}
+
+
+% % Recommendations or perspectives
+% % The final section involves the last part of your academic performance; how to launch the results and conclusions into the future. Is there a need for further investigation and how? What are the perspectives of your results and conclusions? The Perspectives are where you once again broaden the thesis, and point out where your results can be implemented. Recommendations are sometimes included in the Conclusions.
+
+% -experiment with structures under waterline which causes waves to break. Because, in reality, the expection is that in reality, wave energy can be dissipated and therefore turned into molecular heat. But, in ComFLOW this is not the case. When wave breaking occurs in ComFLOW, large fluid velocities occur and lots of numerical dissipation will occur in the numerical dissipation.\\
+% -repeat with hinge stiffness as design variable.\\
+% -when this would be stand-alone setup the optimum would be a drift force of 0, which probably to very different results. \\
+% -in real life maybe go for a breakwater submerged that gets its motions restrained from external equipment, heavy cables beneath, and floating objects above that dont have much drag. (high mean wave drift force)\\
+% -repeat optimisation with a cheap simulation\\
+% -3D effects might be interesting\\
+% -possibility: include island in optimisation but may make it expensive
+% -wat zou de aanpak zijn als ik nog een paar maanden de tijd had gehad?
+% -Fz value ook mappen (sommige configuraties)\\
+% -only capex costs taken into account for cost function. make another cost function based on opex. That the costs over time are also favourable. i.e. maintenance breakwaters is less than improvement work-ability of sections.
+% -moving structures! more complicated things have been done with comflow, so has to be possible\\
+% -\\
+
+
+
+
+% - are such negative drift forces realistic? I expected the negative drift forces to be for very specific conditions, this report showed it is not! experiment would be nice\\
+% \\
+% -quality Design of Experiments predictions
+% \\
+
+
+% Toegevoegde waarde DE? 
+% -Er waren soms breakwaters in the design space who perfomed better than the optimum!
+% -And, is er 1 optimum for an irregular wave spectrum, kunnne er respons surfaces worden geplot, miss zijn er teveel confiugarties nodig--> te duur
+% -begin design proces een goede manier om een inzage te krijgen over een breed design spectrum, maar voor uiteindelijke design niet betrouwbaar genoeg\\
+% \\
+% So, according to the results of ComFLOw and the written cost function, if the breakwater shown in Figure \ref{fig:  most optimal breakwaters DI2 costs captive} will be connected to the floating island. The new mooring costs will be 49\% of the initial mooring costs. 
+
+
+
+

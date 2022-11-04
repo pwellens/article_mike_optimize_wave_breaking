@@ -1,0 +1,90 @@
+\section{Discussion}
+\label{sec: discussion captive design optimization}
+%checklist on how to write discussion:
+%https://www.scribbr.com/research-paper/discussion/
+
+\paragraph{Hydrodynamical analysis}
+
+
+
+
+% The literature review was based on breakwaters which were often freely floating themselves, and mostly restricted in one translational motion: heave. This leads to lower results of course.
+
+
+
+
+% -the breakwaters where waves are breaking by spilling, seem to have a lower mean wave drift force on average. \\
+
+
+% %Linear theory says (longuet higgins) width of the floater does not matter for the mean wave drift force but nonlinear effects cause that it matters!.
+
+% \\
+% -trend iribarren number. Search in literature if a connection between dissipation/drift force and iribarren number is researchec already.\\
+% \\
+% %from response surfaces
+% %Fd:
+% -the structures depth $T$ and the mean wave drift force show a strong, negative correlation (i.e. a large $T$ leads to a small $\Bar{F_d}$ for wedge-type breakwaters). explanation: a large T for a wedge-type structure means a large sloping beach can be realised where lots of dissipation can occur.\\
+% -Relatively shallow wedge-type breakwaters ($T$=2.5) experience a low mean wave drift force when they are placed around 3 meters below the waterline and wedge-type structures with a large depth (11<$T$<13) perform best around the waterline. Box-type structures do not depend strongly on their depth, shows figure \ref{fig: Fd_W_WL_box DI1 H3 captive}.-->quite surprisingly?\\
+
+% %Kt:
+% -The correlation between the structure's depth $T$ and the response is strong for breakwaters above the waterline ($WL$ < 0), but decreases while the breakwater is placed deeper. 
+
+
+% %from design iteration 2
+% -higher T means closer to waterline (at least for wedge-type structures, effect is less/non-existent) for box-type structures, see response surfaces of DI1), why?\\
+% -for low mean wave drift force: either shallow box type structure few meters underneatch waterline, or a large structure (large T and W) with a large sloping beach.
+
+% -ratio of WL/H\_i is the same for both optima which include sloping beach, around 0.33.
+% - T and W are smaller when wave height increases.
+
+
+% %from wave condition 2
+% -beneath the waterline does not scale linearly with the height of the wave when looking at minimal mean wave drift force.
+% -to decrease wave transmission with extreme waves, breakwater is placed closer to or even crossing the waterline.
+% -beneath the waterline does not scale linearly with the height of the wave.
+
+
+
+
+%from costs
+
+
+
+\section{Conclusions}
+\label{sec: conclusions captive design optimization}
+
+% -How can an optimisation of the geometry of the wave-ward modules of a floating island reduce the mooring costs?
+
+% The sub-research questions are formulated as:
+
+% - What is the quality of the results of ComFLOW with the best possible settings?
+% - How does wave attenuation and reduction of drift forces relate to the geometry of the  breakwater?
+% -How can a cooperation between \acrshort{cfd} and an optimisation method provide the best design of the breakwater?
+%  How are the drift forces and the geometry of the breakwater quantified in respectively mooring- and construction-costs?
+
+
+The hydrodynamical analysis of the \acrshort{cdo} contributes to answering the second sub-research question. Which is stated as follows:
+\begin{itemize}
+    \item How does wave attenuation and reduction of drift forces relate to the geometry of the  breakwater?
+\end{itemize}
+
+\paragraph{Mean wave drift force} Almost all completely submerged breakwaters of the design space experienced a negative mean wave drift force. The optima given for Wave Condition 1, in order to minimise the mean wave drift force, came in two variants: a shallow box-type structure 2.2 meters below the water surface or a larger (in depth and width) wedge-type structure 0.8 meters below the water surface. This breakwater experienced a mean wave drift force of -4.7 kN. Wave Condition 2 delivered an optimum with a depth of 7.6 meters, a width of 95.9 meters containing a beach with the slope of a circle with a radius of 2000 meters and submerged 2.9 meters below the waterline. This particular breakwater experienced an mean wave drift force of -56.0 kN. 
+
+\paragraph{Transmitted wave height} The optimal breakwaters in order to attenuate as much of the wave energy possible are larger structures with a large sloping beach at the wave-ward side and placed with their top around the waterline. For Wave Condition 1, the optimum found has a depth of 11.4 meters, a width of 138.2 meters, a large sloping beach with a radius of 2000 meters and has a draught of 10.7 meters. It is able to attenuate 80 \% of the wave energy. The optima for Wave Condition 2 had a depth of 10.6 meters, a width of 141.9 meters, a relatively small sloping beach and has a draught of 9.77 meters. It has a transmission coefficient of 0.06, so it is able to attenuate the wave energy with 76\%. 
+
+\paragraph{Mean wave drift force \& Transmitted wave height} Optima good at minimising both phenomena were structures placed $\frac{1}{3}$th of the wave length beneath the water surface and had a large sloping beach for both wave conditions. The optima for Wave Condition 1 has a depth of 12.2 meters, a width of 150 meters, experienced a mean wave drift force of -8.1 kN and is able to attenuate 90\% of the wave energy. The optimisation with Wave Condition 2 delivered an optimum with a depth of 9 meters, 80 meters long and experiences a mean wave drift force of -47.7 kN and is able to attenuate 53\% of the wave energy. \\
+\\
+Furthermore, the figures where the Iribaren number of all breakwaters were plotted against their mean wave drift force (figure \ref{fig: Kt vs Iri} and \ref{}), showed that box-type structures had on average a larger mean wave drift force. This indicates a sloping beach at the wave-ward side, which forces the incoming waves to break, is an effective way of attenuating wave energy while experiencing a relatively low mean wave drift force. \\
+\\
+In order to answer the main research question, an economical optimisation is one. Here, the maximising the difference between the reduction in mooring costs of the floating island due to the presence of the breakwater and the construction costs of the breakwater was the goal of the optimisation. The optimum found, as a structure which was 10 meters wide, had a depth of 9.6 and a draught of 6.2 meters. According to the output of ComFLOW together with the cost function presented, this breakwater will lead to a cost reduction of \texteuro 24.305 per unit width. So, for the total structure (of nine sections wide, each with a width of 45 meters) this leads to a cost reduction of 9.8 M\texteuro.\\
+\\
+-\textcolor{red}{wave length need to be long compared to sloping beach}\\
+-\textcolor{red}{In reality, also shorter wave lengths present, which will have positive contribution to mean wave drift force}.
+
+
+
+
+
+
+
+
