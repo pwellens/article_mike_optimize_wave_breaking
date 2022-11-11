@@ -1,0 +1,124 @@
+
+\documentclass[final,3p,times]{elsarticle}
+
+\usepackage{amssymb}
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usetikzlibrary{arrows, decorations.markings, shapes.misc, automata, positioning, patterns}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{amsmath}
+% \usepackage[dvipsnames]{xcolor}
+\usepackage{pgfplots}
+\usepackage{amsthm}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label=\arabic*.}
+\setlist[enumerate,2]{label=\arabic*.}
+\usepackage{amsmath}
+\usepackage{cleveref}
+\tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
+%default radius will be 1pt. 
+cross/.default={2pt}}
+\usepackage{mathtools}
+\usepackage{siunitx}
+\setlength\parskip{\smallskipamount}
+
+\def\myplotmark#1{%
+  \begin{pgfpicture}\pgfuseplotmark{#1}\end{pgfpicture}%
+}
+\tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
+%default radius will be 1pt. 
+cross/.default={2pt}}
+
+\DeclarePairedDelimiterXPP\BigOSI[2]%
+  {\mathcal{O}}{(}{)}{}%
+  {\SI{#1}{#2}}
+
+
+\crefname{figure}{}{}
+\Crefname{figure}{}{}
+\usetikzlibrary{shapes}
+
+
+% packages specific to Mike's report
+\usepackage{glossaries}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{nameref} %ref to the name of the chapter
+
+\journal{Coastal Engineering}
+
+\begin{document}
+
+\begin{frontmatter}
+
+%% Title, authors and addresses
+
+\title{Breaking waves, floating islands}
+
+\author{Mike Blom}
+\address{Delft University of Technology, Mekelweg 2 2628CD Delft}
+% \cortext[cor1]{} \ead{m.vandereijk@tudelft.nl}
+
+\author{Joep van der Zanden}
+\address{Delft University of Technology, Mekelweg 2 2628CD Delft}
+% \cortext[cor1]{} \ead{m.vandereijk@tudelft.nl}
+
+\author{Bas Hofland}
+\address{Delft University of Technology, Mekelweg 2 2628CD Delft}
+% \cortext[cor1]{} \ead{m.vandereijk@tudelft.nl}
+
+\author{Peter Wellens\corref{cor2}}
+\address{Delft University of Technology, Mekelweg 2 2628CD Delft}
+\cortext[cor2]{} \ead{p.r.wellens@tudelft.nl}
+
+% Probleem
+% 
+\begin{abstract}
+10 lines of gold
+\end{abstract}
+
+\begin{keyword}
+%% keywords here, in the form: keyword \sep keyword
+Breaking waves \sep Floating islands
+\end{keyword}
+
+\end{frontmatter}
+
+\input{frontmatter/glossarie_input}
+
+%% \linenumbers
+
+%% main text
+
+
+\input{mainmatter/chapter-1Introduction}
+
+\input{mainmatter/chapter-2LiteratureReview}
+
+\input{mainmatter/chapter-3Methodology}
+
+\input{mainmatter/chapter-4Validation}
+
+\input{mainmatter/chapter-5.1WC1-DI1 captive}
+\input{mainmatter/chapter-5.1WC1-DI2 captive}
+\input{mainmatter/chapter-5.1WC2-DI1 captive}
+\input{mainmatter/chapter-5.2HydroAnalysisCaptive}
+
+\input{mainmatter/chapter-5.3Costs-WC1-DI1 captive}
+\input{mainmatter/chapter-5.3Costs-WC1-DI2 captive}
+\input{mainmatter/chapter-5.3EcoAnalysisCaptive}
+
+\input{mainmatter/chapter-7ConculsionRecommendations}
+
+\bibliographystyle{elsarticle-harv} 
+\bibliography{report}
+
+\end{document}
+
+\endinput
+%%
+%% End of file `elsarticle-template-harv.tex'.
